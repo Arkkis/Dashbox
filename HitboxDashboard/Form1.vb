@@ -10,7 +10,7 @@ Public Class Form1
     Dim dataArray As Array
 
     Dim port As Integer, connectionclose As Integer = 0
-    Dim buf As String, login, nick As String, pass As String, owner As String, server As String, chan As String, settitle As String, setgame As String
+    Dim buf As String, login, nick As String, pass As String, server As String, chan As String, settitle As String, setgame As String
     Dim input As TextReader
     Dim output As TextWriter
 
@@ -74,6 +74,7 @@ Public Class Form1
             StatusLabel.Text = "Offline"
         End If
 
+        Return 1
     End Function
 
     Function UpdateData()
@@ -81,7 +82,6 @@ Public Class Form1
 
         nick = NickTextBox.Text
         pass = PasswordTextBox.Text
-        owner = NickTextBox.Text
         server = "irc.glados.tv"
         port = Convert.ToInt32("6667")
         chan = "#pelilegacy"
@@ -98,7 +98,7 @@ Public Class Form1
 
             'Starting USER and NICK login commands 
             'output.Write("PASS " & pass & vbCr & vbLf & "USER " & nick & " 0 * :" & owner & vbCr & vbLf & "NICK " & nick & vbCr & vbLf)
-            login = "PASS " & pass & vbCr & vbLf & "NICK " & nick & vbCr & vbLf & "USER " & nick & " 0 * :" & owner & vbCr & vbLf
+            login = "PASS " & pass & vbCr & vbLf & "NICK " & nick & vbCr & vbLf & "USER " & nick & " 0 * :" & nick & vbCr & vbLf
             Debug.WriteLine(login)
             output.Write(login)
             output.Flush()
