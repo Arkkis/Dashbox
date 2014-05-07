@@ -78,14 +78,14 @@ Partial Class Form1
         Me.PasswordTextBox.Name = "PasswordTextBox"
         Me.PasswordTextBox.PasswordChar = Global.Microsoft.VisualBasic.ChrW(42)
         Me.PasswordTextBox.Size = New System.Drawing.Size(100, 20)
-        Me.PasswordTextBox.TabIndex = 6
+        Me.PasswordTextBox.TabIndex = 9
         '
         'NickTextBox
         '
         Me.NickTextBox.Location = New System.Drawing.Point(72, 126)
         Me.NickTextBox.Name = "NickTextBox"
         Me.NickTextBox.Size = New System.Drawing.Size(100, 20)
-        Me.NickTextBox.TabIndex = 7
+        Me.NickTextBox.TabIndex = 8
         '
         'GameTextBox
         '
@@ -94,14 +94,14 @@ Partial Class Form1
         Me.GameTextBox.Location = New System.Drawing.Point(72, 100)
         Me.GameTextBox.Name = "GameTextBox"
         Me.GameTextBox.Size = New System.Drawing.Size(205, 20)
-        Me.GameTextBox.TabIndex = 8
+        Me.GameTextBox.TabIndex = 7
         '
         'TitleTextBox
         '
         Me.TitleTextBox.Location = New System.Drawing.Point(72, 74)
         Me.TitleTextBox.Name = "TitleTextBox"
         Me.TitleTextBox.Size = New System.Drawing.Size(205, 20)
-        Me.TitleTextBox.TabIndex = 9
+        Me.TitleTextBox.TabIndex = 6
         '
         'SetTitleLabel
         '
@@ -165,6 +165,7 @@ Partial Class Form1
         Me.Controls.Add(Me.ViewersLabel)
         Me.Controls.Add(Me.FollowersLabel)
         Me.Controls.Add(Me.StatusLabel)
+        Me.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle
         Me.Icon = CType(resources.GetObject("$this.Icon"), System.Drawing.Icon)
         Me.Name = "Form1"
         Me.Text = "Dashbox"
