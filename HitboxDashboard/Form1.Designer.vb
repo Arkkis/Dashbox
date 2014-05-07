@@ -36,6 +36,7 @@ Partial Class Form1
         Me.SetNickLabel = New System.Windows.Forms.Label()
         Me.SetPasswordLabel = New System.Windows.Forms.Label()
         Me.UpdateDataButton = New System.Windows.Forms.Button()
+        Me.Label1 = New System.Windows.Forms.Label()
         Me.SuspendLayout()
         '
         'BackgroundWorker1
@@ -46,7 +47,7 @@ Partial Class Form1
         Me.StatusLabel.AutoSize = True
         Me.StatusLabel.Font = New System.Drawing.Font("Microsoft Sans Serif", 14.25!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.StatusLabel.ForeColor = System.Drawing.Color.Green
-        Me.StatusLabel.Location = New System.Drawing.Point(12, 9)
+        Me.StatusLabel.Location = New System.Drawing.Point(142, 9)
         Me.StatusLabel.Name = "StatusLabel"
         Me.StatusLabel.Size = New System.Drawing.Size(66, 24)
         Me.StatusLabel.TabIndex = 1
@@ -148,11 +149,22 @@ Partial Class Form1
         Me.UpdateDataButton.Text = "Update"
         Me.UpdateDataButton.UseVisualStyleBackColor = True
         '
+        'Label1
+        '
+        Me.Label1.AutoSize = True
+        Me.Label1.Font = New System.Drawing.Font("Microsoft Sans Serif", 14.25!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.Label1.Location = New System.Drawing.Point(13, 9)
+        Me.Label1.Name = "Label1"
+        Me.Label1.Size = New System.Drawing.Size(112, 24)
+        Me.Label1.TabIndex = 15
+        Me.Label1.Text = "PeliLegacy"
+        '
         'Form1
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
         Me.ClientSize = New System.Drawing.Size(289, 181)
+        Me.Controls.Add(Me.Label1)
         Me.Controls.Add(Me.UpdateDataButton)
         Me.Controls.Add(Me.SetPasswordLabel)
         Me.Controls.Add(Me.SetNickLabel)
@@ -186,5 +198,6 @@ Partial Class Form1
     Friend WithEvents SetNickLabel As System.Windows.Forms.Label
     Friend WithEvents SetPasswordLabel As System.Windows.Forms.Label
     Friend WithEvents UpdateDataButton As System.Windows.Forms.Button
+    Friend WithEvents Label1 As System.Windows.Forms.Label
 
 End Class
