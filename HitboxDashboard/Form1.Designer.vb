@@ -36,7 +36,7 @@ Partial Class Form1
         Me.SetNickLabel = New System.Windows.Forms.Label()
         Me.SetPasswordLabel = New System.Windows.Forms.Label()
         Me.UpdateDataButton = New System.Windows.Forms.Button()
-        Me.Label1 = New System.Windows.Forms.Label()
+        Me.ChannelTextBox = New System.Windows.Forms.TextBox()
         Me.SuspendLayout()
         '
         'BackgroundWorker1
@@ -44,32 +44,31 @@ Partial Class Form1
         '
         'StatusLabel
         '
-        Me.StatusLabel.AutoSize = True
         Me.StatusLabel.Font = New System.Drawing.Font("Microsoft Sans Serif", 14.25!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.StatusLabel.ForeColor = System.Drawing.Color.Green
-        Me.StatusLabel.Location = New System.Drawing.Point(142, 9)
+        Me.StatusLabel.Location = New System.Drawing.Point(191, 9)
         Me.StatusLabel.Name = "StatusLabel"
-        Me.StatusLabel.Size = New System.Drawing.Size(66, 24)
+        Me.StatusLabel.Size = New System.Drawing.Size(86, 24)
         Me.StatusLabel.TabIndex = 1
-        Me.StatusLabel.Text = "Status"
+        Me.StatusLabel.Text = "Offline"
+        Me.StatusLabel.TextAlign = System.Drawing.ContentAlignment.MiddleRight
         '
         'FollowersLabel
         '
-        Me.FollowersLabel.AutoSize = True
-        Me.FollowersLabel.Font = New System.Drawing.Font("Microsoft Sans Serif", 12.0!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.FollowersLabel.Location = New System.Drawing.Point(142, 39)
+        Me.FollowersLabel.Font = New System.Drawing.Font("Microsoft Sans Serif", 9.75!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.FollowersLabel.Location = New System.Drawing.Point(141, 40)
         Me.FollowersLabel.Name = "FollowersLabel"
-        Me.FollowersLabel.Size = New System.Drawing.Size(85, 20)
+        Me.FollowersLabel.Size = New System.Drawing.Size(136, 20)
         Me.FollowersLabel.TabIndex = 4
         Me.FollowersLabel.Text = "Followers"
+        Me.FollowersLabel.TextAlign = System.Drawing.ContentAlignment.MiddleRight
         '
         'ViewersLabel
         '
-        Me.ViewersLabel.AutoSize = True
-        Me.ViewersLabel.Font = New System.Drawing.Font("Microsoft Sans Serif", 12.0!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.ViewersLabel.Location = New System.Drawing.Point(12, 39)
+        Me.ViewersLabel.Font = New System.Drawing.Font("Microsoft Sans Serif", 9.75!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.ViewersLabel.Location = New System.Drawing.Point(13, 42)
         Me.ViewersLabel.Name = "ViewersLabel"
-        Me.ViewersLabel.Size = New System.Drawing.Size(72, 20)
+        Me.ViewersLabel.Size = New System.Drawing.Size(100, 17)
         Me.ViewersLabel.TabIndex = 5
         Me.ViewersLabel.Text = "Viewers"
         '
@@ -149,22 +148,23 @@ Partial Class Form1
         Me.UpdateDataButton.Text = "Update"
         Me.UpdateDataButton.UseVisualStyleBackColor = True
         '
-        'Label1
+        'ChannelTextBox
         '
-        Me.Label1.AutoSize = True
-        Me.Label1.Font = New System.Drawing.Font("Microsoft Sans Serif", 14.25!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.Label1.Location = New System.Drawing.Point(13, 9)
-        Me.Label1.Name = "Label1"
-        Me.Label1.Size = New System.Drawing.Size(112, 24)
-        Me.Label1.TabIndex = 15
-        Me.Label1.Text = "PeliLegacy"
+        Me.ChannelTextBox.BackColor = System.Drawing.SystemColors.ButtonFace
+        Me.ChannelTextBox.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle
+        Me.ChannelTextBox.Font = New System.Drawing.Font("Microsoft Sans Serif", 14.25!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.ChannelTextBox.Location = New System.Drawing.Point(16, 7)
+        Me.ChannelTextBox.Name = "ChannelTextBox"
+        Me.ChannelTextBox.Size = New System.Drawing.Size(169, 29)
+        Me.ChannelTextBox.TabIndex = 15
+        Me.ChannelTextBox.Text = "pelilegacy"
         '
         'Form1
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
         Me.ClientSize = New System.Drawing.Size(289, 181)
-        Me.Controls.Add(Me.Label1)
+        Me.Controls.Add(Me.ChannelTextBox)
         Me.Controls.Add(Me.UpdateDataButton)
         Me.Controls.Add(Me.SetPasswordLabel)
         Me.Controls.Add(Me.SetNickLabel)
@@ -198,6 +198,6 @@ Partial Class Form1
     Friend WithEvents SetNickLabel As System.Windows.Forms.Label
     Friend WithEvents SetPasswordLabel As System.Windows.Forms.Label
     Friend WithEvents UpdateDataButton As System.Windows.Forms.Button
-    Friend WithEvents Label1 As System.Windows.Forms.Label
+    Friend WithEvents ChannelTextBox As System.Windows.Forms.TextBox
 
 End Class
