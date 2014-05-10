@@ -7,6 +7,10 @@ Imports System.Drawing.Color
 Public Class MainWindow
 
     Dim dburl As String = DownloadString("https://googledrive.com/host/0BwXzp8oa9Tx4eU93R0xUNkFHa00/dashboard.txt")
+    Dim vurl As String = DownloadString("https://googledrive.com/host/0BwXzp8oa9Tx4eU93R0xUNkFHa00/version.txt")
+    Dim remote_ver As String = DownloadString(vurl)
+    Dim version As Double = 20140511005000, remote_version As Double = Double.Parse(remote_ver)
+
     Dim data, status, title, game, followers, viewers As String
     Dim lastgame As String = "", lasttitle As String = ""
     Dim dataArray As Array
@@ -21,6 +25,12 @@ Public Class MainWindow
 
     Public Sub MainWindow_Load(sender As Object, e As EventArgs) Handles MyBase.Load
 
+        If version < remote_version Then
+            MsgBox("New version available!")
+            Process.Start(Application.StartupPath & "\Updater.exe")
+            Close()
+        End If
+
         If File.Exists(Application.StartupPath & "\db.txt") Then
             sr = File.OpenText(Application.StartupPath & "\db.txt")
 
@@ -34,8 +44,7 @@ Public Class MainWindow
         TextBox_Game.AutoCompleteCustomSource = AutoCompleteGame
         TextBox_Game.AutoCompleteSource = AutoCompleteSource.CustomSource
         TextBox_Game.AutoCompleteMode = AutoCompleteMode.SuggestAppend
-        data = DownloadString(dburl + "?channel=" & chan)
-        UpdateUI(data)
+
         Worker_UpdateUI.RunWorkerAsync()
     End Sub
 
@@ -96,6 +105,15 @@ Public Class MainWindow
 
             lastgame = game
             lasttitle = title
+
+            If status = 1 Then
+                Label_Status.Text = "Online"
+                Label_Status.ForeColor = Green
+            Else
+                Label_Status.Text = "Offline"
+                Label_Status.ForeColor = Red
+            End If
+
             found = 1
         Else
             Label_FollowerCount.Text = 0
@@ -106,14 +124,6 @@ Public Class MainWindow
             Button_UpdateData.Enabled = False
             'Debug.WriteLine("Setting found to 0... " & chan)
             found = 0
-        End If
-
-        If status = 1 Then
-            Label_Status.Text = "Online"
-            Label_Status.ForeColor = Green
-        Else
-            Label_Status.Text = "Offline"
-            Label_Status.ForeColor = Red
         End If
 
         Return 1
@@ -154,7 +164,7 @@ Public Class MainWindow
                 'Starting USER and NICK login commands 
                 'output.Write("PASS " & pass & vbCr & vbLf & "USER " & nick & " 0 * :" & owner & vbCr & vbLf & "NICK " & nick & vbCr & vbLf)
                 login = "PASS " & pass & vbCr & vbLf & "NICK " & nick & vbCr & vbLf & "USER " & nick & " 0 * :" & nick & vbCr & vbLf
-                Debug.WriteLine(login)
+                'Debug.WriteLine(login)
                 output.Write(login)
                 output.Flush()
 
