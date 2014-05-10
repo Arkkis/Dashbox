@@ -1,6 +1,11 @@
-Dashbox
-===============
-Visual Basic frontend for Hitbox functionality
+Dashbox Beta 1.0
+================
+Dashboard tool program for Hitbox.tv
+==============================================
+
+Features:
+- Watch automatically updating viewers and followers.
+- Update Game and Title in channel you control.
 
 Requirements: GlaDOS in channel you want to control and rights to do so.
 

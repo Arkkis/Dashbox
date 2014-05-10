@@ -205,7 +205,7 @@ Partial Class MainWindow
         Me.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle
         Me.Icon = CType(resources.GetObject("$this.Icon"), System.Drawing.Icon)
         Me.Name = "MainWindow"
-        Me.Text = "Dashbox"
+        Me.Text = "Dashbox Beta 1.0"
         Me.ResumeLayout(False)
         Me.PerformLayout()
 
