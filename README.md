@@ -9,7 +9,12 @@ Features:
 
 Requirements: GlaDOS in channel you want to control and rights to do so.
 
-Check out our website and streaming channel at http://pelilegacy.fi
+Contact me on:
+http://pelilegacy.fi
+http://hitbox.tv/pelilegacy
+http://twitter.com/ArkkisN
+
+None of your personal info will not be saved to anywhere and will only be used when logging to GlaDOS's IRC-Server.
 Copyrights 2014 - Joni Nieminen
 
 
