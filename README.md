@@ -1,6 +1,8 @@
-HitboxDashboard
+Dashbox
 ===============
 Visual Basic frontend for Hitbox functionality
+
+Requirements: GlaDOS in channel you want to control and rights to do so.
 
 Check out our website and streaming channel at http://pelilegacy.fi
 Copyrights 2014 - Joni Nieminen
