@@ -9,7 +9,7 @@ Public Class MainWindow
     Dim dburl As String = DownloadString("https://googledrive.com/host/0BwXzp8oa9Tx4eU93R0xUNkFHa00/dashboard.txt")
     Dim vurl As String = DownloadString("https://googledrive.com/host/0BwXzp8oa9Tx4eU93R0xUNkFHa00/version.txt")
     Dim remote_ver As String = DownloadString(vurl)
-    Dim version As Double = 20140511015300, remote_version As Double = Double.Parse(remote_ver)
+    Dim version As Double = 20140511213700, remote_version As Double = Double.Parse(remote_ver)
 
     Dim data, status, title, game, followers, viewers As String
     Dim lastgame As String = "", lasttitle As String = ""
