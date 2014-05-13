@@ -3,6 +3,9 @@ Dashbox Beta 1.1
 Dashboard tool program for Hitbox.tv
 ==============================================
 
+Requirements:
+- .Net Framework 4.5
+
 Features:
 - Watch automatically updating viewers and followers.
 - Update Game and Title in channel you control.
