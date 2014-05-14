@@ -11,7 +11,7 @@ Public Class MainWindow
 
     Dim vurl As String = DownloadString("https://googledrive.com/host/0BwXzp8oa9Tx4eU93R0xUNkFHa00/version.txt")
     Dim remote_ver As String = DownloadString(vurl)
-    Dim version As Double = 20140513130000, remote_version As Double = Double.Parse(remote_ver)
+    Dim version As Double = 20140514134600, remote_version As Double = Double.Parse(remote_ver)
 
     Dim data, status, title, game, followers, viewers, AuthToken As String
     Dim lastgame As String = "", lasttitle As String = ""
@@ -111,6 +111,7 @@ Public Class MainWindow
 
             If Not TextBox_Nick.Text = "" And Not TextBox_Password.Text = "" Then
                 Button_UpdateData.Enabled = True
+                Button_UpdateWithGlados.Enabled = True
             End If
 
             If Not lastgame = game Then
@@ -138,6 +139,7 @@ Public Class MainWindow
             TextBox_Title.Text = ""
             TextBox_Game.Text = ""
             Button_UpdateData.Enabled = False
+            Button_UpdateWithGlados.Enabled = False
         End If
 
         Return 1
@@ -177,8 +179,95 @@ Public Class MainWindow
             ElseIf titledone = 0 And gamedone = 0 Then
                 MsgBox("Nothing was updated!")
             End If
+            Return 1
+        Else
+            Return 0
         End If
-        Return 1
+
+    End Function
+
+    Function UpdateWithGlados()
+        If found = 1 Then
+
+            If Not IsNumeric(GetGame(TextBox_Game.Text)) Then
+
+                Button_UpdateData.Enabled = False
+                Button_UpdateWithGlados.Enabled = False
+
+                Dim sock As New System.Net.Sockets.TcpClient()
+
+                nick = TextBox_Nick.Text
+                pass = TextBox_Password.Text
+                server = "irc.glados.tv"
+                port = Convert.ToInt32("6667")
+
+                settitle = TextBox_Title.Text
+                setgame = TextBox_Game.Text
+
+                sock.Connect(server, port)
+                If Not sock.Connected Then
+                    Debug.WriteLine("Failed to connect!")
+                Else
+                    input = New System.IO.StreamReader(sock.GetStream())
+                    output = New System.IO.StreamWriter(sock.GetStream())
+
+                    'Starting USER and NICK login commands 
+                    'output.Write("PASS " & pass & vbCr & vbLf & "USER " & nick & " 0 * :" & owner & vbCr & vbLf & "NICK " & nick & vbCr & vbLf)
+                    login = "PASS " & pass & vbCr & vbLf & "NICK " & nick & vbCr & vbLf & "USER " & nick & " 0 * :" & nick & vbCr & vbLf
+                    'Debug.WriteLine(login)
+                    output.Write(login)
+                    output.Flush()
+
+                    buf = input.ReadLine()
+                    'Debug.WriteLine(buf)
+                    connectionclose = 0
+
+                    While connectionclose = 0
+
+                        If buf.StartsWith("PING ") Then
+                            output.Write(buf.Replace("PING", "PONG") & vbCr & vbLf)
+                            output.Flush()
+                        End If
+                        If buf(0) <> ":"c Then
+                            Continue While
+                        End If
+
+                        If buf.Split(" "c)(1) = "001" Then
+                            output.Write("MODE " & nick & " +B" & vbCr & vbLf & "JOIN " & "#" & chan & vbCr & vbLf)
+                            output.Flush()
+                        End If
+
+                        If buf.Split(" "c)(1) = "366" Then
+                            output.Write("PRIVMSG " & "#" & chan & " :!title " & settitle & vbCr & vbLf)
+                            output.Flush()
+                            output.Write("PRIVMSG " & "#" & chan & " :!game " & setgame & vbCr & vbLf)
+                            output.Flush()
+                            output.Write("QUIT :Disconnected" & vbCr & vbLf)
+                            output.Flush()
+                            'System.Threading.Thread.Sleep(3000)
+                            connectionclose = 1
+                        End If
+
+                        If buf.Split(" "c)(1) = "464" Then
+                            MsgBox("Username and password does not match!")
+                            connectionclose = 1
+                        End If
+
+                        'Debug.WriteLine(buf)
+                        If connectionclose = 1 Then
+                            sock.Close()
+                        Else
+                            buf = input.ReadLine()
+                        End If
+                    End While
+                End If
+                Button_UpdateWithGlados.Enabled = True
+                Button_UpdateData.Enabled = True
+                Return 1
+            End If
+        Else
+            Return 0
+        End If
     End Function
 
     Public Function GetAuth(username As String, password As String) As String
@@ -311,5 +400,9 @@ Public Class MainWindow
         If found = 1 Then
             Process.Start("http://www.hitbox.tv/" & chan)
         End If
+    End Sub
+
+    Private Sub Button1_Click(sender As Object, e As EventArgs) Handles Button_UpdateWithGlados.Click
+        UpdateWithGlados()
     End Sub
 End Class

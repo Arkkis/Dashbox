@@ -39,6 +39,7 @@ Partial Class MainWindow
         Me.TextBox_Channel = New System.Windows.Forms.TextBox()
         Me.Label_ViewerCount = New System.Windows.Forms.Label()
         Me.Label_FollowerCount = New System.Windows.Forms.Label()
+        Me.Button_UpdateWithGlados = New System.Windows.Forms.Button()
         Me.SuspendLayout()
         '
         'Worker_UpdateUI
@@ -49,7 +50,7 @@ Partial Class MainWindow
         Me.Label_Status.AutoSize = True
         Me.Label_Status.Font = New System.Drawing.Font("Microsoft Sans Serif", 14.25!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.Label_Status.ForeColor = System.Drawing.Color.Red
-        Me.Label_Status.Location = New System.Drawing.Point(207, 9)
+        Me.Label_Status.Location = New System.Drawing.Point(233, 9)
         Me.Label_Status.Name = "Label_Status"
         Me.Label_Status.Size = New System.Drawing.Size(70, 24)
         Me.Label_Status.TabIndex = 1
@@ -98,14 +99,14 @@ Partial Class MainWindow
         Me.TextBox_Game.AutoCompleteSource = System.Windows.Forms.AutoCompleteSource.CustomSource
         Me.TextBox_Game.Location = New System.Drawing.Point(72, 100)
         Me.TextBox_Game.Name = "TextBox_Game"
-        Me.TextBox_Game.Size = New System.Drawing.Size(205, 20)
+        Me.TextBox_Game.Size = New System.Drawing.Size(231, 20)
         Me.TextBox_Game.TabIndex = 7
         '
         'TextBox_Title
         '
         Me.TextBox_Title.Location = New System.Drawing.Point(72, 74)
         Me.TextBox_Title.Name = "TextBox_Title"
-        Me.TextBox_Title.Size = New System.Drawing.Size(205, 20)
+        Me.TextBox_Title.Size = New System.Drawing.Size(231, 20)
         Me.TextBox_Title.TabIndex = 6
         '
         'Label_SetTitle
@@ -147,9 +148,9 @@ Partial Class MainWindow
         'Button_UpdateData
         '
         Me.Button_UpdateData.Enabled = False
-        Me.Button_UpdateData.Location = New System.Drawing.Point(178, 126)
+        Me.Button_UpdateData.Location = New System.Drawing.Point(178, 152)
         Me.Button_UpdateData.Name = "Button_UpdateData"
-        Me.Button_UpdateData.Size = New System.Drawing.Size(99, 46)
+        Me.Button_UpdateData.Size = New System.Drawing.Size(125, 20)
         Me.Button_UpdateData.TabIndex = 14
         Me.Button_UpdateData.Text = "Update"
         Me.Button_UpdateData.UseVisualStyleBackColor = True
@@ -161,7 +162,7 @@ Partial Class MainWindow
         Me.TextBox_Channel.Font = New System.Drawing.Font("Microsoft Sans Serif", 14.25!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.TextBox_Channel.Location = New System.Drawing.Point(16, 7)
         Me.TextBox_Channel.Name = "TextBox_Channel"
-        Me.TextBox_Channel.Size = New System.Drawing.Size(185, 29)
+        Me.TextBox_Channel.Size = New System.Drawing.Size(211, 29)
         Me.TextBox_Channel.TabIndex = 15
         '
         'Label_ViewerCount
@@ -182,11 +183,22 @@ Partial Class MainWindow
         Me.Label_FollowerCount.TabIndex = 17
         Me.Label_FollowerCount.Text = "0"
         '
+        'Button_UpdateWithGlados
+        '
+        Me.Button_UpdateWithGlados.Enabled = False
+        Me.Button_UpdateWithGlados.Location = New System.Drawing.Point(178, 126)
+        Me.Button_UpdateWithGlados.Name = "Button_UpdateWithGlados"
+        Me.Button_UpdateWithGlados.Size = New System.Drawing.Size(125, 20)
+        Me.Button_UpdateWithGlados.TabIndex = 18
+        Me.Button_UpdateWithGlados.Text = "Update with GlaDOS"
+        Me.Button_UpdateWithGlados.UseVisualStyleBackColor = True
+        '
         'MainWindow
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
-        Me.ClientSize = New System.Drawing.Size(289, 181)
+        Me.ClientSize = New System.Drawing.Size(315, 181)
+        Me.Controls.Add(Me.Button_UpdateWithGlados)
         Me.Controls.Add(Me.Label_FollowerCount)
         Me.Controls.Add(Me.Label_ViewerCount)
         Me.Controls.Add(Me.TextBox_Channel)
@@ -205,7 +217,7 @@ Partial Class MainWindow
         Me.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle
         Me.Icon = CType(resources.GetObject("$this.Icon"), System.Drawing.Icon)
         Me.Name = "MainWindow"
-        Me.Text = "Dashbox Beta 1.1"
+        Me.Text = "Dashbox Beta 1.1.0.1"
         Me.ResumeLayout(False)
         Me.PerformLayout()
 
@@ -226,5 +238,6 @@ Partial Class MainWindow
     Friend WithEvents TextBox_Channel As System.Windows.Forms.TextBox
     Friend WithEvents Label_ViewerCount As System.Windows.Forms.Label
     Friend WithEvents Label_FollowerCount As System.Windows.Forms.Label
+    Friend WithEvents Button_UpdateWithGlados As System.Windows.Forms.Button
 
 End Class
