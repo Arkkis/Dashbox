@@ -11,14 +11,13 @@ Public Class MainWindow
 
     Dim vurl As String = DownloadString("https://googledrive.com/host/0BwXzp8oa9Tx4eU93R0xUNkFHa00/version.txt")
     Dim remote_ver As String = DownloadString(vurl)
-    Dim version As Double = 20140514134600, remote_version As Double = Double.Parse(remote_ver)
+    Dim version As Double = 20140515000300, remote_version As Double = Double.Parse(remote_ver)
 
-    Dim data, status, title, game, followers, viewers, AuthToken As String
+    Dim data, status, title, game, followers, viewers, AuthToken, buf, login, nick, pass, server, chan, settitle, setgame As String
     Dim lastgame As String = "", lasttitle As String = ""
     Dim dataArray As Array
 
     Dim port As Integer, connectionclose As Integer = 0, found As Integer = 0
-    Dim buf As String, login, nick As String, pass As String, server As String, chan As String, settitle As String, setgame As String
     Dim input As TextReader
     Dim output As TextWriter
 
@@ -27,7 +26,7 @@ Public Class MainWindow
 
     Public Sub MainWindow_Load(sender As Object, e As EventArgs) Handles MyBase.Load
 
-        If version < remote_version Then
+        If version < remote_version And Not IsNothing(remote_version) Then
             MsgBox("New version available!")
             Process.Start(Application.StartupPath & "\Updater.exe")
             Close()
@@ -65,7 +64,10 @@ Public Class MainWindow
         data = e.Result
 
         If DataCheck(data) = 1 Then
+            Button_Chat.Enabled = True
             UpdateUI(data)
+        Else
+            Button_Chat.Enabled = False
         End If
 
         If Not Worker_UpdateUI.IsBusy Then
@@ -224,6 +226,10 @@ Public Class MainWindow
 
                     While connectionclose = 0
 
+                        Debug.WriteLine(buf)
+
+
+
                         If buf.StartsWith("PING ") Then
                             output.Write(buf.Replace("PING", "PONG") & vbCr & vbLf)
                             output.Flush()
@@ -238,12 +244,17 @@ Public Class MainWindow
                         End If
 
                         If buf.Split(" "c)(1) = "366" Then
-                            output.Write("PRIVMSG " & "#" & chan & " :!title " & settitle & vbCr & vbLf)
-                            output.Flush()
-                            output.Write("PRIVMSG " & "#" & chan & " :!game " & setgame & vbCr & vbLf)
-                            output.Flush()
-                            output.Write("QUIT :Disconnected" & vbCr & vbLf)
-                            output.Flush()
+                            If buf.Contains("GLaDOS") Then
+                                output.Write("PRIVMSG " & "#" & chan & " :!title " & settitle & vbCr & vbLf)
+                                output.Flush()
+                                output.Write("PRIVMSG " & "#" & chan & " :!game " & setgame & vbCr & vbLf)
+                                output.Flush()
+                                output.Write("QUIT :Disconnected" & vbCr & vbLf)
+                                output.Flush()
+                                MsgBox("Game and Title updated!")
+                            Else
+                                MsgBox("GLaDOS is not in selected channel!")
+                            End If
                             'System.Threading.Thread.Sleep(3000)
                             connectionclose = 1
                         End If
@@ -404,5 +415,9 @@ Public Class MainWindow
 
     Private Sub Button1_Click(sender As Object, e As EventArgs) Handles Button_UpdateWithGlados.Click
         UpdateWithGlados()
+    End Sub
+
+    Private Sub Button1_Click_1(sender As Object, e As EventArgs) Handles Button_Chat.Click
+        Process.Start("http://www.hitbox.tv/embedchat/" & chan)
     End Sub
 End Class
