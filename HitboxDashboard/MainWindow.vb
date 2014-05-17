@@ -11,7 +11,7 @@ Public Class MainWindow
 
     Dim vurl As String = DownloadString("https://googledrive.com/host/0BwXzp8oa9Tx4eU93R0xUNkFHa00/version.txt")
     Dim remote_ver As String = DownloadString(vurl)
-    Dim version As Double = 20140515000300, remote_version As Double = Double.Parse(remote_ver)
+    Public version As Double = 20140517180301, remote_version As Double = Double.Parse(remote_ver)
 
     Dim data, status, title, game, followers, viewers, AuthToken, buf, login, nick, pass, server, chan, settitle, setgame As String
     Dim lastgame As String = "", lasttitle As String = ""
@@ -25,27 +25,8 @@ Public Class MainWindow
     Dim AutoCompleteGame As New AutoCompleteStringCollection
 
     Public Sub MainWindow_Load(sender As Object, e As EventArgs) Handles MyBase.Load
-
-        If version < remote_version And Not IsNothing(remote_version) Then
-            MsgBox("New version available!")
-            Process.Start(Application.StartupPath & "\Updater.exe")
-            Close()
-        End If
-
-        If File.Exists(Application.StartupPath & "\db.txt") Then
-            sr = File.OpenText(Application.StartupPath & "\db.txt")
-
-            While Not sr.EndOfStream
-                AutoCompleteGame.Add(sr.ReadLine)
-            End While
-
-            sr.Close()
-        End If
-
-        TextBox_Game.AutoCompleteCustomSource = AutoCompleteGame
-        TextBox_Game.AutoCompleteSource = AutoCompleteSource.CustomSource
-        TextBox_Game.AutoCompleteMode = AutoCompleteMode.SuggestAppend
-
+        Check_Update()
+        Load_Gamelist()
         Worker_UpdateUI.RunWorkerAsync()
     End Sub
 
@@ -63,7 +44,7 @@ Public Class MainWindow
     Private Sub Worker_UpdateUI_RunWorkerCompleted(sender As Object, e As ComponentModel.RunWorkerCompletedEventArgs) Handles Worker_UpdateUI.RunWorkerCompleted
         data = e.Result
 
-        If DataCheck(data) = 1 Then
+        If Check_Data(data) = 1 Then
             Button_Chat.Enabled = True
             UpdateUI(data)
         Else
@@ -101,7 +82,7 @@ Public Class MainWindow
 
     Function UpdateUI(data As String)
 
-        If DataCheck(data) = 1 Then
+        If Check_Data(data) = 1 Then
             status = StringBetween(data, """media_is_live"":""", """")
             title = StringBetween(data, """media_status"":""", """")
             game = StringBetween(data, """category_name"":""", """")
@@ -147,7 +128,7 @@ Public Class MainWindow
         Return 1
     End Function
 
-    Function DataCheck(data As String)
+    Function Check_Data(data As String)
         If Not data = "" Then
             found = 1
             Debug.WriteLine("Found 1")
@@ -157,6 +138,36 @@ Public Class MainWindow
         End If
 
         Return found
+    End Function
+
+    Function Check_Update()
+        If version < remote_version And Not IsNothing(remote_version) Then
+            MsgBox("New version available!")
+            Process.Start(Application.StartupPath & "\Updater.exe")
+            Return True
+            Close()
+        Else
+            Return False
+        End If
+    End Function
+
+    Function Load_Gamelist()
+        If File.Exists(Application.StartupPath & "\db.txt") Then
+            sr = File.OpenText(Application.StartupPath & "\db.txt")
+
+            While Not sr.EndOfStream
+                AutoCompleteGame.Add(sr.ReadLine)
+            End While
+
+            sr.Close()
+
+            TextBox_Game.AutoCompleteCustomSource = AutoCompleteGame
+            TextBox_Game.AutoCompleteSource = AutoCompleteSource.CustomSource
+            TextBox_Game.AutoCompleteMode = AutoCompleteMode.SuggestAppend
+            Return 1
+        Else
+            Return 0
+        End If
     End Function
 
     Function UpdateData()
@@ -243,7 +254,8 @@ Public Class MainWindow
                             output.Flush()
                         End If
 
-                        If buf.Split(" "c)(1) = "366" Then
+                        If buf.Split(" "c)(1) = "353" Then
+                            Debug.WriteLine(buf)
                             If buf.Contains("GLaDOS") Then
                                 output.Write("PRIVMSG " & "#" & chan & " :!title " & settitle & vbCr & vbLf)
                                 output.Flush()
@@ -274,8 +286,10 @@ Public Class MainWindow
                 End If
                 Button_UpdateWithGlados.Enabled = True
                 Button_UpdateData.Enabled = True
-                Return 1
+            Else
+                MsgBox("Game does not match to Hitbox database!")
             End If
+            Return 1
         Else
             Return 0
         End If
