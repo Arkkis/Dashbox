@@ -5,8 +5,8 @@ Public Class Updater
 
     Public Shared Sub Main()
         MsgBox("Updating now.")
-        Dim updateurl As String = DownloadString("https://googledrive.com/host/0BwXzp8oa9Tx4eU93R0xUNkFHa00/update.txt")
-        Dim updatedb As String = DownloadString(updateurl), dwnurl As String
+        'Dim updateurl As String = DownloadString("https://googledrive.com/host/0BwXzp8oa9Tx4eU93R0xUNkFHa00/update.txt")
+        Dim updatedb As String = DownloadString("https://googledrive.com/host/0BwXzp8oa9Tx4eU93R0xUNkFHa00/update.txt"), dwnurl As String
         Dim array As Array
         Dim path As String = Application.StartupPath & "\"
 

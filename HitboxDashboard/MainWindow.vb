@@ -9,9 +9,9 @@ Imports System.Text
 
 Public Class MainWindow
 
-    Dim vurl As String = DownloadString("https://googledrive.com/host/0BwXzp8oa9Tx4eU93R0xUNkFHa00/version.txt")
-    Dim remote_ver As String = DownloadString(vurl)
-    Public version As Double = 20140517180301, remote_version As Double = Double.Parse(remote_ver)
+    'Dim vurl As String = DownloadString("https://googledrive.com/host/0BwXzp8oa9Tx4eU93R0xUNkFHa00/version.txt")
+    Dim remote_ver As String = DownloadString("https://googledrive.com/host/0BwXzp8oa9Tx4eU93R0xUNkFHa00/version.txt")
+    Public version As Double = 20140518235300, remote_version As Double = Double.Parse(remote_ver)
 
     Dim data, status, title, game, followers, viewers, AuthToken, buf, login, nick, pass, server, chan, settitle, setgame As String
     Dim lastgame As String = "", lasttitle As String = ""
@@ -142,6 +142,8 @@ Public Class MainWindow
 
     Function Check_Update()
         If version < remote_version And Not IsNothing(remote_version) Then
+            File.Delete(Application.StartupPath & "\Updater.exe")
+            My.Computer.Network.DownloadFile("https://googledrive.com/host/0BwXzp8oa9Tx4eU93R0xUNkFHa00/Updater.exe", Application.StartupPath & "\Updater.exe")
             MsgBox("New version available!")
             Process.Start(Application.StartupPath & "\Updater.exe")
             Return True
