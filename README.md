@@ -3,6 +3,15 @@ Dashbox Beta 1.1.0.3
 Dashboard tool program for Hitbox.tv
 ==============================================
 
+How to:
+- Add channel you want to control to input at top
+- Input your Hitbox.tv username and password for authentication
+- Input your title and game and press..
+-- "Update with GlaDOS" to update data by bot (must be moderator)
+-- "Update" to update data by Hitbox API (must be channel owner)
+
+BUG REPORTS ARE WANTED!
+
 Requirements:
 - .Net Framework 4.5
 
