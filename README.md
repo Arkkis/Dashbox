@@ -1,4 +1,4 @@
-Dashbox Beta 1.1.3
+Dashbox Beta 1.1.4
 ====================
 Dashboard tool program for Hitbox.tv
 ==============================================

@@ -174,6 +174,7 @@ Partial Class MainWindow
         Me.TextBox_Channel.Name = "TextBox_Channel"
         Me.TextBox_Channel.Size = New System.Drawing.Size(211, 30)
         Me.TextBox_Channel.TabIndex = 15
+        Me.TextBox_Channel.Text = "Input channel here"
         '
         'Label_ViewerCount
         '
@@ -244,7 +245,7 @@ Partial Class MainWindow
         Me.MaximizeBox = False
         Me.Name = "MainWindow"
         Me.SizeGripStyle = System.Windows.Forms.SizeGripStyle.Hide
-        Me.Text = "Dashbox Beta 1.1.3"
+        Me.Text = "Dashbox Beta 1.1.4"
         Me.ResumeLayout(False)
         Me.PerformLayout()
 
