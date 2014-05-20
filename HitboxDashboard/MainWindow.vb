@@ -6,15 +6,18 @@ Imports System.Threading.Thread
 Imports System.Drawing.Color
 Imports Newtonsoft.Json.Linq
 Imports System.Text
+Imports System.Security.Cryptography
+Imports System.Runtime.InteropServices
+Imports System.ComponentModel
 
 Public Class MainWindow
 
     'Dim vurl As String = DownloadString("https://googledrive.com/host/0BwXzp8oa9Tx4eU93R0xUNkFHa00/version.txt")
     Dim remote_ver As String = DownloadString("https://googledrive.com/host/0BwXzp8oa9Tx4eU93R0xUNkFHa00/version.txt")
-    Public version As Double = 20140519235300, remote_version As Double = Double.Parse(remote_ver)
+    Public version As Double = 20140520212200, remote_version As Double = Double.Parse(remote_ver)
 
     Dim data, status, title, game, followers, viewers, AuthToken, buf, login, nick, pass, server, chan, settitle, setgame As String
-    Dim lastgame As String = "", lasttitle As String = ""
+    Dim lastgame As String = "", lasttitle As String = "", passcode As String = "Dashboxx", inifile As String = Application.StartupPath & "\conf.ini"
     Dim dataArray As Array
 
     Dim port As Integer, connectionclose As Integer = 0, found As Integer = 0
@@ -25,9 +28,30 @@ Public Class MainWindow
     Dim AutoCompleteGame As New AutoCompleteStringCollection
 
     Public Sub MainWindow_Load(sender As Object, e As EventArgs) Handles MyBase.Load
+        If Not ReadINI(inifile, "Settings", "channel") = "" Then
+            TextBox_Channel.Text = ReadINI(inifile, "Settings", "channel")
+        End If
+
+        TextBox_Username.Text = ReadINI(inifile, "Settings", "username")
+        TextBox_Password.Text = AES_Decrypt(ReadINI(inifile, "Settings", "password"), passcode)
+
         Check_Update()
         Load_Gamelist()
         Worker_UpdateUI.RunWorkerAsync()
+    End Sub
+
+    Private Sub Button_Save_Click(sender As Object, e As EventArgs) Handles Button_Save.Click
+        If Not TextBox_Channel.Text = ReadINI(inifile, "Settings", "channel") And Not TextBox_Channel.Text = "" Then
+            WriteINI(inifile, "Settings", "channel", TextBox_Channel.Text)
+        End If
+
+        If Not TextBox_Username.Text = ReadINI(inifile, "Settings", "username") And Not TextBox_Username.Text = "" Then
+            WriteINI(inifile, "Settings", "username", TextBox_Username.Text)
+        End If
+
+        If Not AES_Encrypt(TextBox_Password.Text, passcode) = ReadINI(inifile, "Settings", "password") And Not TextBox_Password.Text = "" Then
+            WriteINI(inifile, "Settings", "password", AES_Encrypt(TextBox_Password.Text, passcode))
+        End If
     End Sub
 
     Private Sub Worker_UpdateUI_DoWork(sender As Object, e As ComponentModel.DoWorkEventArgs) Handles Worker_UpdateUI.DoWork
@@ -38,7 +62,7 @@ Public Class MainWindow
             data = ""
         End If
         e.Result = data
-        Sleep(2500)
+        Sleep(500)
     End Sub
 
     Private Sub Worker_UpdateUI_RunWorkerCompleted(sender As Object, e As ComponentModel.RunWorkerCompletedEventArgs) Handles Worker_UpdateUI.RunWorkerCompleted
@@ -48,6 +72,8 @@ Public Class MainWindow
             Button_Chat.Enabled = True
             UpdateUI(data)
         Else
+            Label_Status.ForeColor = Red
+            Label_Status.Text = "Channel not found!"
             Button_Chat.Enabled = False
         End If
 
@@ -55,6 +81,44 @@ Public Class MainWindow
             Worker_UpdateUI.RunWorkerAsync()
         End If
     End Sub
+
+    Public Function AES_Encrypt(ByVal input As String, ByVal pass As String) As String
+        Dim AES As New System.Security.Cryptography.RijndaelManaged
+        Dim Hash_AES As New System.Security.Cryptography.MD5CryptoServiceProvider
+        Dim encrypted As String = ""
+        Try
+            Dim hash(31) As Byte
+            Dim temp As Byte() = Hash_AES.ComputeHash(System.Text.ASCIIEncoding.ASCII.GetBytes(pass))
+            Array.Copy(temp, 0, hash, 0, 16)
+            Array.Copy(temp, 0, hash, 15, 16)
+            AES.Key = hash
+            AES.Mode = CipherMode.ECB
+            Dim DESEncrypter As System.Security.Cryptography.ICryptoTransform = AES.CreateEncryptor
+            Dim Buffer As Byte() = System.Text.ASCIIEncoding.ASCII.GetBytes(input)
+            encrypted = Convert.ToBase64String(DESEncrypter.TransformFinalBlock(Buffer, 0, Buffer.Length))
+            Return encrypted
+        Catch ex As Exception
+        End Try
+    End Function
+
+    Public Function AES_Decrypt(ByVal input As String, ByVal pass As String) As String
+        Dim AES As New System.Security.Cryptography.RijndaelManaged
+        Dim Hash_AES As New System.Security.Cryptography.MD5CryptoServiceProvider
+        Dim decrypted As String = ""
+        Try
+            Dim hash(31) As Byte
+            Dim temp As Byte() = Hash_AES.ComputeHash(System.Text.ASCIIEncoding.ASCII.GetBytes(pass))
+            Array.Copy(temp, 0, hash, 0, 16)
+            Array.Copy(temp, 0, hash, 15, 16)
+            AES.Key = hash
+            AES.Mode = CipherMode.ECB
+            Dim DESDecrypter As System.Security.Cryptography.ICryptoTransform = AES.CreateDecryptor
+            Dim Buffer As Byte() = Convert.FromBase64String(input)
+            decrypted = System.Text.ASCIIEncoding.ASCII.GetString(DESDecrypter.TransformFinalBlock(Buffer, 0, Buffer.Length))
+            Return decrypted
+        Catch ex As Exception
+        End Try
+    End Function
 
     Function StringBetween(str As String, start As String, ending As String)
         Dim reply As String
@@ -92,7 +156,7 @@ Public Class MainWindow
             Label_ViewerCount.Text = viewers
             chan = TextBox_Channel.Text.ToLower
 
-            If Not TextBox_Nick.Text = "" And Not TextBox_Password.Text = "" Then
+            If Not TextBox_Username.Text = "" And Not TextBox_Password.Text = "" Then
                 Button_UpdateData.Enabled = True
                 Button_UpdateWithGlados.Enabled = True
             End If
@@ -142,10 +206,22 @@ Public Class MainWindow
 
     Function Check_Update()
         If version < remote_version And Not IsNothing(remote_version) Then
-            File.Delete(Application.StartupPath & "\Updater.exe")
-            My.Computer.Network.DownloadFile("https://googledrive.com/host/0BwXzp8oa9Tx4eU93R0xUNkFHa00/Updater.exe", Application.StartupPath & "\Updater.exe")
+            Try
+                My.Computer.Network.DownloadFile("https://googledrive.com/host/0BwXzp8oa9Tx4eU93R0xUNkFHa00/Updater.exe", Application.StartupPath & "\Updater.exe", "", "", False, 3000, True)
+            Catch ex As WebException
+                MsgBox("Can't access Updater.exe! File might be read-only! Closing Dashbox..")
+                Application.Exit()
+            End Try
+
             MsgBox("New version available!")
-            Process.Start(Application.StartupPath & "\Updater.exe")
+
+            Try
+                Process.Start(Application.StartupPath & "\Updater.exe")
+            Catch ex As Win32Exception
+                MsgBox("No rights to start Updater.exe")
+                Application.Exit()
+            End Try
+
             Application.Exit()
             Return True
         Else
@@ -175,12 +251,13 @@ Public Class MainWindow
     Function UpdateData()
         Dim titledone = 0, gamedone = 0
         If found = 1 Then
-            If UpdateTitle(TextBox_Nick.Text, TextBox_Title.Text) Then
+            Me.Enabled = False
+            If UpdateTitle(TextBox_Username.Text, TextBox_Title.Text) Then
                 titledone = 1
             End If
 
             If Not IsNumeric(GetGame(TextBox_Game.Text)) Then
-                If UpdateGame(TextBox_Nick.Text, TextBox_Game.Text) Then
+                If UpdateGame(TextBox_Username.Text, TextBox_Game.Text) Then
                     gamedone = 1
                 End If
             End If
@@ -194,6 +271,7 @@ Public Class MainWindow
             ElseIf titledone = 0 And gamedone = 0 Then
                 MsgBox("Nothing was updated!")
             End If
+            Me.Enabled = True
             Return 1
         Else
             Return 0
@@ -203,15 +281,15 @@ Public Class MainWindow
 
     Function UpdateWithGlados()
         If found = 1 Then
-
+            Me.Enabled = False
             If Not IsNumeric(GetGame(TextBox_Game.Text)) Then
 
-                Button_UpdateData.Enabled = False
-                Button_UpdateWithGlados.Enabled = False
+                'Button_UpdateData.Enabled = False
+                'Button_UpdateWithGlados.Enabled = False
 
                 Dim sock As New System.Net.Sockets.TcpClient()
 
-                nick = TextBox_Nick.Text
+                nick = TextBox_Username.Text
                 pass = TextBox_Password.Text
                 server = "irc.glados.tv"
                 port = Convert.ToInt32("6667")
@@ -286,8 +364,9 @@ Public Class MainWindow
                         End If
                     End While
                 End If
-                Button_UpdateWithGlados.Enabled = True
-                Button_UpdateData.Enabled = True
+                'Button_UpdateWithGlados.Enabled = True
+                'Button_UpdateData.Enabled = True
+                Me.Enabled = True
             Else
                 MsgBox("Game does not match to Hitbox database!")
             End If
@@ -319,7 +398,7 @@ Public Class MainWindow
     End Function
 
     Function UpdateTitle(username As String, title As String)
-        Dim AuthToken = GetAuth(TextBox_Nick.Text, TextBox_Password.Text)
+        Dim AuthToken = GetAuth(TextBox_Username.Text, TextBox_Password.Text)
         Dim request = WebRequest.CreateHttp("http://www.hitbox.tv/api/media/live/" & username & "/list?authToken=" & AuthToken & "&filter=recent&hiddenOnly=false&limit=1&nocache=true&publicOnly=false&yt=false")
         request.Headers.Add("Accept-Encoding", "gzip,deflate")
         request.AutomaticDecompression = DecompressionMethods.GZip Or DecompressionMethods.Deflate
@@ -358,7 +437,7 @@ Public Class MainWindow
     End Function
 
     Function UpdateGame(username As String, game As String)
-        Dim AuthToken = GetAuth(TextBox_Nick.Text, TextBox_Password.Text)
+        Dim AuthToken = GetAuth(TextBox_Username.Text, TextBox_Password.Text)
         Dim user As JObject = Nothing
         Dim request = WebRequest.CreateHttp("http://www.hitbox.tv/api/media/live/" & username & "/list?authToken=" & AuthToken & "&filter=recent&hiddenOnly=false&limit=1&nocache=true&publicOnly=false&yt=false")
         request.Headers.Add("Accept-Encoding", "gzip,deflate")
@@ -419,6 +498,24 @@ Public Class MainWindow
         End Using
     End Function
 
+    <DllImport("kernel32.dll", SetLastError:=True)> _
+    Private Shared Function GetPrivateProfileString(ByVal lpAppName As String, ByVal lpKeyName As String, ByVal lpDefault As String, ByVal lpReturnedString As StringBuilder, ByVal nSize As Integer, ByVal lpFileName As String) As Integer
+    End Function
+
+    <DllImport("kernel32.dll", SetLastError:=True)> _
+    Private Shared Function WritePrivateProfileString(ByVal lpAppName As String, ByVal lpKeyName As String, ByVal lpString As String, ByVal lpFileName As String) As Boolean
+    End Function
+
+    Public Shared Function ReadINI(ByVal File As String, ByVal Section As String, ByVal Key As String) As String
+        Dim sb As New StringBuilder(500)
+        GetPrivateProfileString(Section, Key, "", sb, sb.Capacity, File)
+        Return sb.ToString
+    End Function
+
+    Public Shared Sub WriteINI(ByVal File As String, ByVal Section As String, ByVal Key As String, ByVal Value As String)
+        WritePrivateProfileString(Section, Key, Value, File)
+    End Sub
+
     Private Sub UpdateDataButton_Click(sender As Object, e As EventArgs) Handles Button_UpdateData.Click
         UpdateData()
     End Sub
@@ -435,5 +532,25 @@ Public Class MainWindow
 
     Private Sub Button1_Click_1(sender As Object, e As EventArgs) Handles Button_Chat.Click
         Process.Start("http://www.hitbox.tv/embedchat/" & chan)
+    End Sub
+
+    Private Sub TextBox_Channel_MouseHover(sender As Object, e As EventArgs) Handles TextBox_Channel.MouseHover
+        ToolTip_Channel.SetToolTip(TextBox_Channel, "Type channel here you want to control.")
+    End Sub
+
+    Private Sub TextBox_Title_MouseHover(sender As Object, e As EventArgs) Handles TextBox_Title.MouseHover
+        ToolTip_Title.SetToolTip(TextBox_Title, "Type title to change it.")
+    End Sub
+
+    Private Sub TextBox_Game_MouseHover(sender As Object, e As EventArgs) Handles TextBox_Game.MouseHover
+        ToolTip_Game.SetToolTip(TextBox_Game, "Type game you are going to play. (Autocomplete ON)")
+    End Sub
+
+    Private Sub TextBox_Username_MouseHover(sender As Object, e As EventArgs) Handles TextBox_Username.MouseHover
+        ToolTip_Username.SetToolTip(TextBox_Username, "Type your Hitbox username here.")
+    End Sub
+
+    Private Sub TextBox_Password_MouseHover(sender As Object, e As EventArgs) Handles TextBox_Password.MouseHover
+        ToolTip_Password.SetToolTip(TextBox_Password, "Type your Hitbox password here.")
     End Sub
 End Class
