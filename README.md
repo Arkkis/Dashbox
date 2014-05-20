@@ -1,4 +1,4 @@
-# Dashbox
+﻿# Dashbox
 
 Dashboard management tool for [Hitbox.tv](http://www.hitbox.tv) livestreams. Similar to eg. Twitch Dashboard Lite and other tools but for Hitbox.tv.
 
@@ -26,13 +26,13 @@ Download compiled binaries from [here](https://github.com/Arkkis/Dashbox/release
 We want your reports! Please, open an issue here on GitHub for that.
 
 ### Contact
+[Twitter @ArkkisN](http://twitter.com/ArkkisN) 
 [Peliyhdistys Legacy ry](http://www.pelilegacy.fi)  
-[Peli Legacy Hitbox channel](http://hitbox.tv/pelilegacy)  
-[Twitter @ArkkisN](http://twitter.com/ArkkisN)  
+[Peli Legacy Hitbox channel](http://hitbox.tv/pelilegacy)   
 
 ### Disclaimer
 
-None of your personal information will be recorded by this software. Your username and password will only be used when authenticating to Hitbox.tv API.
+Your username and password will only be used when authenticating to Hitbox.tv API.
 
 © 2014 Joni Nieminen
 
