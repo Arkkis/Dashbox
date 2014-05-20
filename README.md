@@ -1,35 +1,41 @@
-Dashbox Beta 1.1.4
-====================
-Dashboard tool program for Hitbox.tv
-==============================================
+# Dashbox
 
-How to:
-- Add channel you want to control to input at top
-- Input your Hitbox.tv username and password for authentication
-- Input your title and game and press..
--- "Update with GlaDOS" to update data by bot (must be moderator)
--- "Update" to update data by Hitbox API (must be channel owner)
+Dashboard management tool for [Hitbox.tv](http://www.hitbox.tv) livestreams. Similar to eg. Twitch Dashboard Lite and other tools but for Hitbox.tv.
 
-BUG REPORTS ARE WANTED!
+Download compiled binaries from [here](https://github.com/Arkkis/Dashbox/releases).
 
-Requirements:
+### Requirements
 - .Net Framework 4.5
 
-Features:
-- Watch automatically updating viewers and followers.
-- Update Game and Title in channel you control.
+### Features
 
-Contact me on:
-http://pelilegacy.fi
-http://hitbox.tv/pelilegacy
-http://twitter.com/ArkkisN
+- Update livestream title and game details via Hitbox.tv API or [GlaDOS-bot](http://glados.tv/Commands)
+- Automatically suggests game names so you don't have to guess
+- Monitor your channel's viewer and follower count in real-time -- no need to open a browser!
 
-None of your personal info will not be saved to anywhere and will only be used when authenticating to Hitbox API.
-Copyrights 2014 - Joni Nieminen
+### Usage
 
+1. Type the name of the channel you want to control
+2. Type your Hitbox.tv username and password for authentication
+3. Type your livestream title and game name, then press either of the following two
+- **Update with GlaDOS** to update data via GlaDOS bot (you must have moderator rights in the specified channel)
+- **Update** to update data normally via Hitbox.tv API (you must own the specified channel)
 
-Special thanks to Daniel Beaupre for for giving me nice example of how you update Hitbox stuff.
+### Bugs?
 
-Check him out at:
-https://twitter.com/danbopes
-http://www.hitbox.tv/glados
+We want your reports! Please, open an issue here on GitHub for that.
+
+### Contact
+[Peliyhdistys Legacy ry](http://www.pelilegacy.fi)  
+[Peli Legacy Hitbox channel](http://hitbox.tv/pelilegacy)  
+[Twitter @ArkkisN](http://twitter.com/ArkkisN)  
+
+### Disclaimer
+
+None of your personal information will be recorded by this software. Your username and password will only be used when authenticating to Hitbox.tv API.
+
+© 2014 Joni Nieminen
+
+Special thanks to Daniel Beaupre for for giving me a nice example of how to update Hitbox stuff.
+
+Check him out at [Twitter @danbopes](https://twitter.com/danbopes) and [Hitbox](http://www.hitbox.tv/glados).
