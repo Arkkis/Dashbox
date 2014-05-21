@@ -289,7 +289,7 @@ Partial Class MainWindow
         Me.MaximizeBox = False
         Me.Name = "MainWindow"
         Me.SizeGripStyle = System.Windows.Forms.SizeGripStyle.Hide
-        Me.Text = "Dashbox 1.2.3"
+        Me.Text = "Dashbox 1.2.4"
         Me.ResumeLayout(False)
         Me.PerformLayout()
 
