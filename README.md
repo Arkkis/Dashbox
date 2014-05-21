@@ -38,6 +38,7 @@ Special thanks to Daniel Beaupre for for giving me a nice example of how to upda
 
 Check him out at [Twitter @danbopes](https://twitter.com/danbopes) and [Hitbox](http://www.hitbox.tv/glados).
 
+### License
 
 Copyright (C) 2014  Joni Nieminen
 
