@@ -1,4 +1,19 @@
-﻿Imports System
+﻿'Copyright (C) 2014  Joni Nieminen
+
+'This program is free software: you can redistribute it and/or modify
+'it under the terms of the GNU General Public License as published by
+'the Free Software Foundation, either version 3 of the License, or
+'(at your option) any later version.
+
+'This program is distributed in the hope that it will be useful,
+'but WITHOUT ANY WARRANTY; without even the implied warranty of
+'MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+'GNU General Public License for more details.
+
+'You should have received a copy of the GNU General Public License
+'along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+Imports System
 Imports System.IO
 Imports System.Net
 Imports System.Web
@@ -52,6 +67,8 @@ Public Class MainWindow
         If Not AES_Encrypt(TextBox_Password.Text, passcode) = ReadINI(inifile, "Settings", "password") And Not TextBox_Password.Text = "" Then
             WriteINI(inifile, "Settings", "password", AES_Encrypt(TextBox_Password.Text, passcode))
         End If
+
+        MsgBox("Login details saved!")
     End Sub
 
     Private Sub Worker_UpdateUI_DoWork(sender As Object, e As ComponentModel.DoWorkEventArgs) Handles Worker_UpdateUI.DoWork
