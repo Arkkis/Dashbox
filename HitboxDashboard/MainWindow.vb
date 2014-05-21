@@ -29,7 +29,7 @@ Public Class MainWindow
 
     'Dim vurl As String = DownloadString("https://googledrive.com/host/0BwXzp8oa9Tx4eU93R0xUNkFHa00/version.txt")
     Dim remote_ver As String = DownloadString("https://googledrive.com/host/0BwXzp8oa9Tx4eU93R0xUNkFHa00/version.txt")
-    Public version As Double = 20140521213900, remote_version As Double = Double.Parse(remote_ver)
+    Public version As Double = 20140521221400, remote_version As Double = Double.Parse(remote_ver)
 
     Dim data, status, title, game, followers, viewers, AuthToken, buf, login, nick, pass, server, chan, settitle, setgame As String
     Dim lastgame As String = "", lasttitle As String = "", passcode As String = "Dashboxx", inifile As String = Application.StartupPath & "\conf.ini"
@@ -403,18 +403,29 @@ Public Class MainWindow
         writer.Write(postData)
         writer.Close()
 
-        Dim stream As Stream = request.GetResponse().GetResponseStream()
-        Dim reader As New StreamReader(stream)
-        Dim response As String = String.Empty
-        response = reader.ReadLine()
+        Try
+            Dim stream As Stream = request.GetResponse().GetResponseStream()
+            Dim reader As New StreamReader(stream)
+            Dim response As String = String.Empty
+            response = reader.ReadLine()
 
-        Dim array As Array = Split(response, """")
+            Dim array As Array = Split(response, """")
 
-        Return array(3)
+            Return array(3)
+        Catch ex As Exception
+            Return ""
+        End Try
+
     End Function
 
     Function UpdateTitle(username As String, title As String)
         Dim AuthToken = GetAuth(TextBox_Username.Text, TextBox_Password.Text)
+
+        If AuthToken = "" Then
+            MsgBox("Couldn't authenticate to change title!")
+            Return False
+        End If
+
         Dim request = WebRequest.CreateHttp("http://www.hitbox.tv/api/media/live/" & username & "/list?authToken=" & AuthToken & "&filter=recent&hiddenOnly=false&limit=1&nocache=true&publicOnly=false&yt=false")
         request.Headers.Add("Accept-Encoding", "gzip,deflate")
         request.AutomaticDecompression = DecompressionMethods.GZip Or DecompressionMethods.Deflate
@@ -454,6 +465,12 @@ Public Class MainWindow
 
     Function UpdateGame(username As String, game As String)
         Dim AuthToken = GetAuth(TextBox_Username.Text, TextBox_Password.Text)
+
+        If AuthToken = "" Then
+            MsgBox("Couldn't authenticate to change game!")
+            Return False
+        End If
+
         Dim user As JObject = Nothing
         Dim request = WebRequest.CreateHttp("http://www.hitbox.tv/api/media/live/" & username & "/list?authToken=" & AuthToken & "&filter=recent&hiddenOnly=false&limit=1&nocache=true&publicOnly=false&yt=false")
         request.Headers.Add("Accept-Encoding", "gzip,deflate")
