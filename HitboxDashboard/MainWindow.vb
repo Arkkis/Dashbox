@@ -29,7 +29,7 @@ Public Class MainWindow
 
     'Dim vurl As String = DownloadString("https://googledrive.com/host/0BwXzp8oa9Tx4eU93R0xUNkFHa00/version.txt")
     Dim remote_ver As String = DownloadString("https://googledrive.com/host/0BwXzp8oa9Tx4eU93R0xUNkFHa00/version.txt")
-    Public version As Double = 20140521153600, remote_version As Double = Double.Parse(remote_ver)
+    Public version As Double = 20140521213900, remote_version As Double = Double.Parse(remote_ver)
 
     Dim data, status, title, game, followers, viewers, AuthToken, buf, login, nick, pass, server, chan, settitle, setgame As String
     Dim lastgame As String = "", lasttitle As String = "", passcode As String = "Dashboxx", inifile As String = Application.StartupPath & "\conf.ini"
@@ -212,10 +212,8 @@ Public Class MainWindow
     Function Check_Data(data As String)
         If Not data = "" Then
             found = 1
-            Debug.WriteLine("Found 1")
         Else
             found = 0
-            Debug.WriteLine("Found 0")
         End If
 
         Return found
@@ -301,9 +299,6 @@ Public Class MainWindow
             Me.Enabled = False
             If Not IsNumeric(GetGame(TextBox_Game.Text)) Then
 
-                'Button_UpdateData.Enabled = False
-                'Button_UpdateWithGlados.Enabled = False
-
                 Dim sock As New System.Net.Sockets.TcpClient()
 
                 nick = TextBox_Username.Text
@@ -314,29 +309,38 @@ Public Class MainWindow
                 settitle = TextBox_Title.Text
                 setgame = TextBox_Game.Text
 
+                sock.SendTimeout = 10000
+                sock.ReceiveTimeout = 10000
                 sock.Connect(server, port)
+
                 If Not sock.Connected Then
-                    Debug.WriteLine("Failed to connect!")
+                    MsgBox("Couldn't connect to GLaDOS server!")
                 Else
                     input = New System.IO.StreamReader(sock.GetStream())
                     output = New System.IO.StreamWriter(sock.GetStream())
 
                     'Starting USER and NICK login commands 
-                    'output.Write("PASS " & pass & vbCr & vbLf & "USER " & nick & " 0 * :" & owner & vbCr & vbLf & "NICK " & nick & vbCr & vbLf)
                     login = "PASS " & pass & vbCr & vbLf & "NICK " & nick & vbCr & vbLf & "USER " & nick & " 0 * :" & nick & vbCr & vbLf
-                    'Debug.WriteLine(login)
                     output.Write(login)
                     output.Flush()
 
-                    buf = input.ReadLine()
-                    'Debug.WriteLine(buf)
                     connectionclose = 0
 
+                    Try
+                        buf = input.ReadLine()
+                    Catch ex As System.Net.Sockets.SocketException
+                        MsgBox("Couldn't connect to GLaDOS server in given time! (Timeout: 10sec)")
+                        connectionclose = 1
+                        Me.Enabled = True
+                        Return 0
+                    Catch ex As IOException
+                        MsgBox("Couldn't connect to GLaDOS server in given time! (Timeout: 10sec)")
+                        connectionclose = 1
+                        Me.Enabled = True
+                        Return 0
+                    End Try
+
                     While connectionclose = 0
-
-                        Debug.WriteLine(buf)
-
-
 
                         If buf.StartsWith("PING ") Then
                             output.Write(buf.Replace("PING", "PONG") & vbCr & vbLf)
@@ -352,7 +356,6 @@ Public Class MainWindow
                         End If
 
                         If buf.Split(" "c)(1) = "353" Then
-                            Debug.WriteLine(buf)
                             If buf.Contains("GLaDOS") Then
                                 output.Write("PRIVMSG " & "#" & chan & " :!title " & settitle & vbCr & vbLf)
                                 output.Flush()
@@ -364,7 +367,6 @@ Public Class MainWindow
                             Else
                                 MsgBox("GLaDOS is not in selected channel!")
                             End If
-                            'System.Threading.Thread.Sleep(3000)
                             connectionclose = 1
                         End If
 
@@ -373,7 +375,6 @@ Public Class MainWindow
                             connectionclose = 1
                         End If
 
-                        'Debug.WriteLine(buf)
                         If connectionclose = 1 Then
                             sock.Close()
                         Else
@@ -381,8 +382,6 @@ Public Class MainWindow
                         End If
                     End While
                 End If
-                'Button_UpdateWithGlados.Enabled = True
-                'Button_UpdateData.Enabled = True
                 Me.Enabled = True
             Else
                 MsgBox("Game does not match to Hitbox database!")
