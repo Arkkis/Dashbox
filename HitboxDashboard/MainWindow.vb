@@ -91,6 +91,10 @@ Public Class MainWindow
         Else
             Label_Status.ForeColor = Red
             Label_Status.Text = "Channel not found!"
+            TextBox_Title.Text = ""
+            TextBox_Game.Text = ""
+            Label_ViewerCount.Text = "0"
+            Label_FollowerCount.Text = "0"
             Button_Chat.Enabled = False
             Button_UpdateData.Enabled = False
             Button_UpdateWithGlados.Enabled = False
