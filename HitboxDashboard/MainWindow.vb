@@ -92,6 +92,8 @@ Public Class MainWindow
             Label_Status.ForeColor = Red
             Label_Status.Text = "Channel not found!"
             Button_Chat.Enabled = False
+            Button_UpdateData.Enabled = False
+            Button_UpdateWithGlados.Enabled = False
         End If
 
         If Not Worker_UpdateUI.IsBusy Then

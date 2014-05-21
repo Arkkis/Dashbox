@@ -22,6 +22,7 @@ Partial Class Main
     'Do not modify it using the code editor.
     <System.Diagnostics.DebuggerStepThrough()> _
     Private Sub InitializeComponent()
+        Dim resources As System.ComponentModel.ComponentResourceManager = New System.ComponentModel.ComponentResourceManager(GetType(Main))
         Me.Label_Updating = New System.Windows.Forms.Label()
         Me.ProgressBar_Update = New System.Windows.Forms.ProgressBar()
         Me.BackgroundWorker = New System.ComponentModel.BackgroundWorker()
@@ -59,6 +60,7 @@ Partial Class Main
         Me.Cursor = System.Windows.Forms.Cursors.WaitCursor
         Me.Font = New System.Drawing.Font("Segoe UI", 8.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None
+        Me.Icon = CType(resources.GetObject("$this.Icon"), System.Drawing.Icon)
         Me.Name = "Main"
         Me.ShowIcon = False
         Me.ShowInTaskbar = False

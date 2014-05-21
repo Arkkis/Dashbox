@@ -32,6 +32,8 @@ We want your reports! Please, open an issue here on GitHub for that.
 
 ### Disclaimer
 
+This application is NOT official Hitbox product so don't bother the staff about it.
+
 Your username and password will only be used when authenticating to Hitbox.tv API.
 
 Special thanks to Daniel Beaupre for for giving me a nice example of how to update Hitbox stuff.
