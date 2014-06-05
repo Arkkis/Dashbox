@@ -29,7 +29,7 @@ Public Class MainWindow
 
     'Dim vurl As String = DownloadString("https://googledrive.com/host/0BwXzp8oa9Tx4eU93R0xUNkFHa00/version.txt")
     Dim remote_ver As String = DownloadString("https://googledrive.com/host/0BwXzp8oa9Tx4eU93R0xUNkFHa00/version.txt")
-    Public version As Double = 20140522004000, remote_version As Double = Double.Parse(remote_ver)
+    Public version As Double = 20140605031700, remote_version As Double = Double.Parse(remote_ver)
 
     Dim data, status, title, game, followers, viewers, AuthToken, buf, login, nick, pass, server, chan, settitle, setgame As String
     Dim lastgame As String = "", lasttitle As String = "", passcode As String = "Dashboxx", inifile As String = Application.StartupPath & "\conf.ini"
@@ -195,7 +195,7 @@ Public Class MainWindow
             lastgame = game
             lasttitle = title
 
-            If status = 1 Then
+            If Not status = "" Then
                 Label_Status.Text = "Online"
                 Label_Status.ForeColor = Green
             Else
@@ -216,7 +216,7 @@ Public Class MainWindow
     End Function
 
     Function Check_Data(data As String)
-        If Not data = "" Then
+        If Not data = "" And Not data = "no_media_found" Then
             found = 1
         Else
             found = 0
@@ -226,6 +226,7 @@ Public Class MainWindow
     End Function
 
     Function Check_Update()
+
         If version < remote_version And Not IsNothing(remote_version) Then
             Try
                 My.Computer.Network.DownloadFile("https://googledrive.com/host/0BwXzp8oa9Tx4eU93R0xUNkFHa00/Updater.exe", Application.StartupPath & "\Updater.exe", "", "", False, 3000, True)
