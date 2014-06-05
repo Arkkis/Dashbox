@@ -29,7 +29,7 @@ Public Class MainWindow
 
     'Dim vurl As String = DownloadString("https://googledrive.com/host/0BwXzp8oa9Tx4eU93R0xUNkFHa00/version.txt")
     Dim remote_ver As String = DownloadString("https://googledrive.com/host/0BwXzp8oa9Tx4eU93R0xUNkFHa00/version.txt")
-    Public version As Double = 20140605034500, remote_version As Double = Double.Parse(remote_ver)
+    Public version As Double = 20140606010000, remote_version As Double = Double.Parse(remote_ver)
 
     Dim data, status, title, game, followers, viewers, AuthToken, buf, login, nick, pass, server, chan, settitle, setgame As String
     Dim lastgame As String = "", lasttitle As String = "", passcode As String = "Dashboxx", inifile As String = Application.StartupPath & "\conf.ini"
@@ -328,7 +328,12 @@ Public Class MainWindow
 
                 sock.SendTimeout = 10000
                 sock.ReceiveTimeout = 10000
-                sock.Connect(server, port)
+
+                Try
+                    sock.Connect(server, port)
+                Catch ex As Exception
+                    Debug.WriteLine(ex.ToString)
+                End Try
 
                 If Not sock.Connected Then
                     MsgBox("Couldn't connect to GLaDOS server!")
