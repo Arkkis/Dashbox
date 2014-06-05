@@ -29,7 +29,7 @@ Public Class MainWindow
 
     'Dim vurl As String = DownloadString("https://googledrive.com/host/0BwXzp8oa9Tx4eU93R0xUNkFHa00/version.txt")
     Dim remote_ver As String = DownloadString("https://googledrive.com/host/0BwXzp8oa9Tx4eU93R0xUNkFHa00/version.txt")
-    Public version As Double = 20140605031700, remote_version As Double = Double.Parse(remote_ver)
+    Public version As Double = 20140605034500, remote_version As Double = Double.Parse(remote_ver)
 
     Dim data, status, title, game, followers, viewers, AuthToken, buf, login, nick, pass, server, chan, settitle, setgame As String
     Dim lastgame As String = "", lasttitle As String = "", passcode As String = "Dashboxx", inifile As String = Application.StartupPath & "\conf.ini"
@@ -43,6 +43,16 @@ Public Class MainWindow
     Dim AutoCompleteGame As New AutoCompleteStringCollection
 
     Public Sub MainWindow_Load(sender As Object, e As EventArgs) Handles MyBase.Load
+        If Not File.Exists(inifile) Then
+            Try
+                Dim fs As FileStream
+                fs = File.OpenWrite(inifile)
+                fs.Close()
+            Catch ex As UnauthorizedAccessException
+                MsgBox("Couldn't create conf.ini! Try running program as administrator!")
+            End Try
+        End If
+
         If Not ReadINI(inifile, "Settings", "channel") = "" Then
             TextBox_Channel.Text = ReadINI(inifile, "Settings", "channel")
         End If
