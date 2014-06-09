@@ -29,13 +29,13 @@ Public Class MainWindow
 
     'Dim vurl As String = DownloadString("https://googledrive.com/host/0BwXzp8oa9Tx4eU93R0xUNkFHa00/version.txt")
     Dim remote_ver As String = DownloadString("https://googledrive.com/host/0BwXzp8oa9Tx4eU93R0xUNkFHa00/version.txt")
-    Public version As Double = 20140606010000, remote_version As Double = Double.Parse(remote_ver)
+    Public version As Double = 20140609035100, remote_version As Double = Double.Parse(remote_ver)
 
     Dim data, status, title, game, followers, viewers, AuthToken, buf, login, nick, pass, server, chan, settitle, setgame As String
-    Dim lastgame As String = "", lasttitle As String = "", passcode As String = "Dashboxx", inifile As String = Application.StartupPath & "\conf.ini"
+    Dim lastchan = "", lastgame = "", lasttitle = "", passcode = "Dashboxx", inifile = Application.StartupPath & "\conf.ini"
     Dim dataArray As Array
 
-    Dim port As Integer, connectionclose As Integer = 0, found As Integer = 0
+    Dim port As Integer, connectionclose = 0, found = 0, dataupdate = 1
     Dim input As TextReader
     Dim output As TextWriter
 
@@ -66,24 +66,37 @@ Public Class MainWindow
     End Sub
 
     Private Sub Button_Save_Click(sender As Object, e As EventArgs) Handles Button_Save.Click
-        If Not TextBox_Channel.Text = ReadINI(inifile, "Settings", "channel") And Not TextBox_Channel.Text = "" Then
-            WriteINI(inifile, "Settings", "channel", TextBox_Channel.Text)
+
+        chan = TextBox_Channel.Text
+        nick = TextBox_Username.Text
+        pass = TextBox_Password.Text
+
+        If Not chan = ReadINI(inifile, "Settings", "channel") And Not chan = "" Then
+            WriteINI(inifile, "Settings", "channel", chan)
         End If
 
-        If Not TextBox_Username.Text = ReadINI(inifile, "Settings", "username") And Not TextBox_Username.Text = "" Then
-            WriteINI(inifile, "Settings", "username", TextBox_Username.Text)
+        If Not nick = ReadINI(inifile, "Settings", "username") And Not nick = "" Then
+            WriteINI(inifile, "Settings", "username", nick)
         End If
 
-        If Not AES_Encrypt(TextBox_Password.Text, passcode) = ReadINI(inifile, "Settings", "password") And Not TextBox_Password.Text = "" Then
-            WriteINI(inifile, "Settings", "password", AES_Encrypt(TextBox_Password.Text, passcode))
+        If Not AES_Encrypt(pass, passcode) = ReadINI(inifile, "Settings", "password") And Not pass = "" Then
+            WriteINI(inifile, "Settings", "password", AES_Encrypt(pass, passcode))
         End If
 
         MsgBox("Login details saved!")
     End Sub
 
     Private Sub Worker_UpdateUI_DoWork(sender As Object, e As ComponentModel.DoWorkEventArgs) Handles Worker_UpdateUI.DoWork
-        chan = TextBox_Channel.Text.ToLower
-        If Not chan = "" Then
+        chan = TextBox_Channel.Text
+
+        If Not chan = lastchan Then
+            dataupdate = 1
+            lastchan = chan
+        Else
+            dataupdate = 0
+        End If
+
+        If chan.Trim.Length Then
             data = DownloadString("http://www.hitbox.tv/api/media/live/" & chan & "/list")
         Else
             data = ""
@@ -110,7 +123,7 @@ Public Class MainWindow
             Button_UpdateWithGlados.Enabled = False
         End If
 
-        If Not Worker_UpdateUI.IsBusy Then
+        If Worker_UpdateUI.IsBusy = False Then
             Worker_UpdateUI.RunWorkerAsync()
         End If
     End Sub
@@ -179,50 +192,40 @@ Public Class MainWindow
 
     Function UpdateUI(data As String)
 
-        If Check_Data(data) = 1 Then
-            status = StringBetween(data, """media_is_live"":""", """")
-            title = StringBetween(data, """media_status"":""", """")
-            game = StringBetween(data, """category_name"":""", """")
-            followers = StringBetween(data, """followers"":""", """")
-            viewers = StringBetween(data, """media_views"":""", """")
-            Label_FollowerCount.Text = followers
-            Label_ViewerCount.Text = viewers
-            chan = TextBox_Channel.Text.ToLower
+        status = StringBetween(data, """media_is_live"":""", """")
+        title = StringBetween(data, """media_status"":""", """")
+        game = StringBetween(data, """category_name"":""", """")
+        followers = StringBetween(data, """followers"":""", """")
+        viewers = StringBetween(data, """media_views"":""", """")
+        Label_FollowerCount.Text = followers
+        Label_ViewerCount.Text = viewers
+        chan = TextBox_Channel.Text.ToLower
 
-            If Not TextBox_Username.Text = "" And Not TextBox_Password.Text = "" Then
-                Button_UpdateData.Enabled = True
-                Button_UpdateWithGlados.Enabled = True
-            End If
-
-            If Not lastgame = game Then
-                TextBox_Game.Text = game
-            End If
-
-            If Not lasttitle = title Then
-                TextBox_Title.Text = title
-            End If
-
-            lastgame = game
-            lasttitle = title
-
-            If Not status = "" Then
-                Label_Status.Text = "Online"
-                Label_Status.ForeColor = Green
-            Else
-                Label_Status.Text = "Offline"
-                Label_Status.ForeColor = Red
-            End If
-        Else
-            Label_FollowerCount.Text = 0
-            Label_ViewerCount.Text = 0
-
-            TextBox_Title.Text = ""
-            TextBox_Game.Text = ""
-            Button_UpdateData.Enabled = False
-            Button_UpdateWithGlados.Enabled = False
+        If Not TextBox_Username.Text = "" And Not TextBox_Password.Text = "" Then
+            Button_UpdateData.Enabled = True
+            Button_UpdateWithGlados.Enabled = True
         End If
 
-        Return 1
+        If dataupdate = 1 Then
+            If Not game = "" Then
+                TextBox_Game.Text = game
+                lastgame = game
+            End If
+
+            If Not title = "" Then
+                TextBox_Title.Text = title
+                lasttitle = title
+            End If
+        End If
+
+        If status = "1" Then
+            Label_Status.Text = "Online"
+            Label_Status.ForeColor = Green
+        Else
+            Label_Status.Text = "Offline"
+            Label_Status.ForeColor = Red
+        End If
+
     End Function
 
     Function Check_Data(data As String)
@@ -281,15 +284,20 @@ Public Class MainWindow
     End Function
 
     Function UpdateData()
+        Me.Enabled = False
         Dim titledone = 0, gamedone = 0
+        nick = TextBox_Username.Text
+        pass = TextBox_Password.Text
+        settitle = TextBox_Title.Text
+        setgame = TextBox_Game.Text
+
         If found = 1 Then
-            Me.Enabled = False
-            If UpdateTitle(TextBox_Username.Text, TextBox_Title.Text) Then
+            If UpdateTitle(settitle) = True Then
                 titledone = 1
             End If
 
-            If Not IsNumeric(GetGame(TextBox_Game.Text)) Then
-                If UpdateGame(TextBox_Username.Text, TextBox_Game.Text) Then
+            If TypeOf GetGame(setgame) Is JObject Then
+                If UpdateGame(setgame) Then
                     gamedone = 1
                 End If
             End If
@@ -303,115 +311,97 @@ Public Class MainWindow
             ElseIf titledone = 0 And gamedone = 0 Then
                 MsgBox("Nothing was updated!")
             End If
-            Me.Enabled = True
-            Return 1
-        Else
-            Return 0
         End If
-
+        Me.Enabled = True
     End Function
 
     Function UpdateWithGlados()
-        If found = 1 Then
-            Me.Enabled = False
-            If Not IsNumeric(GetGame(TextBox_Game.Text)) Then
+        Me.Enabled = False
 
-                Dim sock As New System.Net.Sockets.TcpClient()
+        nick = TextBox_Username.Text
+        pass = TextBox_Password.Text
+        server = "irc.glados.tv"
+        port = Convert.ToInt32("6667")
+        settitle = TextBox_Title.Text
+        setgame = TextBox_Game.Text
+        connectionclose = 0
 
-                nick = TextBox_Username.Text
-                pass = TextBox_Password.Text
-                server = "irc.glados.tv"
-                port = Convert.ToInt32("6667")
+        If found = 1 And TypeOf GetGame(setgame) Is JObject Then
+            Dim sock As New System.Net.Sockets.TcpClient()
 
-                settitle = TextBox_Title.Text
-                setgame = TextBox_Game.Text
+            sock.SendTimeout = 10000
+            sock.ReceiveTimeout = 10000
 
-                sock.SendTimeout = 10000
-                sock.ReceiveTimeout = 10000
+            Try
+                sock.Connect(server, port)
+            Catch ex As Exception
+                connectionclose = 1
+                MsgBox("Couldn't connect to GLaDOS server in given time! (Timeout: 10sec)")
+            End Try
+
+            If Not connectionclose = 1 Then
+                input = New System.IO.StreamReader(sock.GetStream())
+                output = New System.IO.StreamWriter(sock.GetStream())
+                output.Write("PASS " & pass & vbCr & vbLf & "NICK " & nick & vbCr & vbLf & "USER " & nick & " 0 * :" & nick & vbCr & vbLf)
+                output.Flush()
 
                 Try
-                    sock.Connect(server, port)
+                    buf = input.ReadLine()
                 Catch ex As Exception
-                    Debug.WriteLine(ex.ToString)
+                    connectionclose = 1
+                    MsgBox("Couldn't connect to GLaDOS server in given time! (Timeout: 10sec)")
+                    'Me.Enabled = True
+                    'Return 0
                 End Try
 
-                If Not sock.Connected Then
-                    MsgBox("Couldn't connect to GLaDOS server!")
-                Else
-                    input = New System.IO.StreamReader(sock.GetStream())
-                    output = New System.IO.StreamWriter(sock.GetStream())
+                While connectionclose = 0
 
-                    'Starting USER and NICK login commands 
-                    login = "PASS " & pass & vbCr & vbLf & "NICK " & nick & vbCr & vbLf & "USER " & nick & " 0 * :" & nick & vbCr & vbLf
-                    output.Write(login)
-                    output.Flush()
+                    If buf.StartsWith("PING ") Then
+                        output.Write(buf.Replace("PING", "PONG") & vbCr & vbLf)
+                        output.Flush()
+                    End If
 
-                    connectionclose = 0
+                    If buf(0) <> ":"c Then
+                        Continue While
+                    End If
 
-                    Try
-                        buf = input.ReadLine()
-                    Catch ex As System.Net.Sockets.SocketException
-                        MsgBox("Couldn't connect to GLaDOS server in given time! (Timeout: 10sec)")
-                        connectionclose = 1
-                        Me.Enabled = True
-                        Return 0
-                    Catch ex As IOException
-                        MsgBox("Couldn't connect to GLaDOS server in given time! (Timeout: 10sec)")
-                        connectionclose = 1
-                        Me.Enabled = True
-                        Return 0
-                    End Try
+                    If buf.Split(" "c)(1) = "001" Then
+                        output.Write("MODE " & nick & " +B" & vbCr & vbLf & "JOIN " & "#" & chan & vbCr & vbLf)
+                        output.Flush()
+                    End If
 
-                    While connectionclose = 0
-
-                        If buf.StartsWith("PING ") Then
-                            output.Write(buf.Replace("PING", "PONG") & vbCr & vbLf)
+                    If buf.Split(" "c)(1) = "353" Then
+                        If buf.Contains("GLaDOS") Then
+                            output.Write("PRIVMSG " & "#" & chan & " :!title " & settitle & vbCr & vbLf)
                             output.Flush()
-                        End If
-                        If buf(0) <> ":"c Then
-                            Continue While
-                        End If
-
-                        If buf.Split(" "c)(1) = "001" Then
-                            output.Write("MODE " & nick & " +B" & vbCr & vbLf & "JOIN " & "#" & chan & vbCr & vbLf)
+                            output.Write("PRIVMSG " & "#" & chan & " :!game " & setgame & vbCr & vbLf)
                             output.Flush()
-                        End If
-
-                        If buf.Split(" "c)(1) = "353" Then
-                            If buf.Contains("GLaDOS") Then
-                                output.Write("PRIVMSG " & "#" & chan & " :!title " & settitle & vbCr & vbLf)
-                                output.Flush()
-                                output.Write("PRIVMSG " & "#" & chan & " :!game " & setgame & vbCr & vbLf)
-                                output.Flush()
-                                output.Write("QUIT :Disconnected" & vbCr & vbLf)
-                                output.Flush()
-                                MsgBox("Game and Title updated!")
-                            Else
-                                MsgBox("GLaDOS is not in selected channel!")
-                            End If
-                            connectionclose = 1
-                        End If
-
-                        If buf.Split(" "c)(1) = "464" Then
-                            MsgBox("Username and password does not match!")
-                            connectionclose = 1
-                        End If
-
-                        If connectionclose = 1 Then
-                            sock.Close()
+                            output.Write("QUIT :Disconnected" & vbCr & vbLf)
+                            output.Flush()
+                            MsgBox("Game and Title updated!")
                         Else
-                            buf = input.ReadLine()
+                            MsgBox("GLaDOS is not in selected channel!")
                         End If
-                    End While
-                End If
-                Me.Enabled = True
-            Else
-                MsgBox("Game does not match to Hitbox database!")
+                        connectionclose = 1
+                    End If
+
+                    If buf.Split(" "c)(1) = "464" Then
+                        MsgBox("Username and password does not match!")
+                        connectionclose = 1
+                    End If
+
+                    If connectionclose = 1 Then
+                        sock.Close()
+                    Else
+                        buf = input.ReadLine()
+                    End If
+                End While
             End If
-            Return 1
         Else
-            Return 0
+            MsgBox("Channel or game is not recognized!")
         End If
+
+        Me.Enabled = True
     End Function
 
     Public Function GetAuth(username As String, password As String) As String
@@ -440,24 +430,33 @@ Public Class MainWindow
 
     End Function
 
-    Function UpdateTitle(username As String, title As String)
-        Dim AuthToken = GetAuth(TextBox_Username.Text, TextBox_Password.Text)
+    Function UpdateTitle(title As String)
+
+        chan = TextBox_Channel.Text
+        nick = TextBox_Username.Text
+        pass = TextBox_Password.Text
+
+        Dim AuthToken = GetAuth(nick, pass)
 
         If AuthToken = "" Then
             MsgBox("Couldn't authenticate to change title!")
             Return False
         End If
 
-        Dim request = WebRequest.CreateHttp("http://www.hitbox.tv/api/media/live/" & username & "/list?authToken=" & AuthToken & "&filter=recent&hiddenOnly=false&limit=1&nocache=true&publicOnly=false&yt=false")
+        Dim request = WebRequest.CreateHttp("http://www.hitbox.tv/api/media/live/" & chan & "/list?authToken=" & AuthToken & "&filter=recent&hiddenOnly=false&limit=1&nocache=true&publicOnly=false&yt=false")
         request.Headers.Add("Accept-Encoding", "gzip,deflate")
         request.AutomaticDecompression = DecompressionMethods.GZip Or DecompressionMethods.Deflate
+        request.Timeout = 10000
 
         Dim user As JObject = Nothing
-        Using response = request.GetResponse()
-            Using readStream As New StreamReader(response.GetResponseStream(), Encoding.UTF8)
-                user = JObject.Parse(readStream.ReadToEnd())
-            End Using
-        End Using
+
+        Try
+            Dim response = request.GetResponse()
+            Dim readStream As New StreamReader(response.GetResponseStream(), Encoding.UTF8)
+            user = JObject.Parse(readStream.ReadToEnd())
+        Catch ex As Exception
+            Return False
+        End Try
 
         Dim livestreams = user.Value(Of JArray)("livestream")
         If livestreams.Count > 0 Then
@@ -466,27 +465,36 @@ Public Class MainWindow
 
         Dim toWrite = user.ToString()
 
-        Dim request2 = WebRequest.CreateHttp("http://www.hitbox.tv/api/media/live/" & username & "/list?authToken=" & AuthToken & "&filter=recent&hiddenOnly=false&limit=1&nocache=true&publicOnly=false&yt=false")
+        Dim request2 = WebRequest.CreateHttp("http://www.hitbox.tv/api/media/live/" & chan & "/list?authToken=" & AuthToken & "&filter=recent&hiddenOnly=false&limit=1&nocache=true&publicOnly=false&yt=false")
         request2.Method = "PUT"
         request2.ContentType = "application/json"
         request2.Headers.Add("Accept-Encoding", "gzip,deflate")
         request2.AutomaticDecompression = DecompressionMethods.GZip Or DecompressionMethods.Deflate
+        request2.Timeout = 10000
         Dim bytes As Byte() = Encoding.ASCII.GetBytes(toWrite)
         request2.ContentLength = bytes.Length
         Dim os As Stream = request2.GetRequestStream()
         os.Write(bytes, 0, bytes.Length)
         'Push it out there
         os.Close()
-        Using response = request2.GetResponse()
-            Using readStream As New StreamReader(response.GetResponseStream(), Encoding.UTF8)
-                Return True
-            End Using
-        End Using
+        Try
+            Dim response = request2.GetResponse()
+            Dim readStream As New StreamReader(response.GetResponseStream(), Encoding.UTF8)
+            Return True
+        Catch ex As Exception
+            MsgBox("No access to update title!")
+            Return False
+        End Try
 
     End Function
 
-    Function UpdateGame(username As String, game As String)
-        Dim AuthToken = GetAuth(TextBox_Username.Text, TextBox_Password.Text)
+    Function UpdateGame(game As String)
+
+        chan = TextBox_Channel.Text
+        nick = TextBox_Username.Text
+        pass = TextBox_Password.Text
+
+        Dim AuthToken = GetAuth(nick, pass)
 
         If AuthToken = "" Then
             MsgBox("Couldn't authenticate to change game!")
@@ -494,15 +502,19 @@ Public Class MainWindow
         End If
 
         Dim user As JObject = Nothing
-        Dim request = WebRequest.CreateHttp("http://www.hitbox.tv/api/media/live/" & username & "/list?authToken=" & AuthToken & "&filter=recent&hiddenOnly=false&limit=1&nocache=true&publicOnly=false&yt=false")
+        Dim request = WebRequest.CreateHttp("http://www.hitbox.tv/api/media/live/" & chan & "/list?authToken=" & AuthToken & "&filter=recent&hiddenOnly=false&limit=1&nocache=true&publicOnly=false&yt=false")
         request.Headers.Add("Accept-Encoding", "gzip,deflate")
         request.AutomaticDecompression = DecompressionMethods.GZip Or DecompressionMethods.Deflate
+        request.Timeout = 10000
 
-        Using response = request.GetResponse()
-            Using readStream As New StreamReader(response.GetResponseStream(), Encoding.UTF8)
-                user = JObject.Parse(readStream.ReadToEnd())
-            End Using
-        End Using
+        Try
+            Dim response = request.GetResponse()
+            Dim readStream As New StreamReader(response.GetResponseStream(), Encoding.UTF8)
+            user = JObject.Parse(readStream.ReadToEnd())
+        Catch ex As Exception
+            MsgBox("Couldn't update game! Check it for correct spelling!")
+            Return False
+        End Try
 
         Dim livestreams = user.Value(Of JArray)("livestream")
         If livestreams.Count > 0 Then
@@ -511,46 +523,58 @@ Public Class MainWindow
 
         Dim toWrite = user.ToString()
 
-        Dim request2 = WebRequest.CreateHttp("http://www.hitbox.tv/api/media/live/" & username & "/list?authToken=" & AuthToken & "&filter=recent&hiddenOnly=false&limit=1&nocache=true&publicOnly=false&yt=false")
+        Dim request2 = WebRequest.CreateHttp("http://www.hitbox.tv/api/media/live/" & chan & "/list?authToken=" & AuthToken & "&filter=recent&hiddenOnly=false&limit=1&nocache=true&publicOnly=false&yt=false")
         request2.Method = "PUT"
         request2.ContentType = "application/json"
         request2.Headers.Add("Accept-Encoding", "gzip,deflate")
         request2.AutomaticDecompression = DecompressionMethods.GZip Or DecompressionMethods.Deflate
+        request2.Timeout = 10000
         Dim bytes As Byte() = Encoding.ASCII.GetBytes(toWrite)
         request2.ContentLength = bytes.Length
         Dim os As Stream = request2.GetRequestStream()
         os.Write(bytes, 0, bytes.Length)
         os.Close()
-        Using response = request2.GetResponse()
-            Using readStream As New StreamReader(response.GetResponseStream(), Encoding.UTF8)
-                Return True
-            End Using
-        End Using
 
+        Try
+            Dim response = request2.GetResponse()
+            Dim readStream As New StreamReader(response.GetResponseStream(), Encoding.UTF8)
+        Catch ex As Exception
+            MsgBox("No access to update game!")
+            Return False
+        End Try
+
+        Return True
     End Function
 
     Function GetGame(game As String)
+        If game = "" Then
+            Return False
+        End If
+
         Dim request = WebRequest.CreateHttp("http://www.hitbox.tv/api/games?q=" & HttpUtility.UrlEncode(game) & "&limit=100")
         request.Headers.Add("Accept-Encoding", "gzip,deflate")
         request.AutomaticDecompression = DecompressionMethods.GZip Or DecompressionMethods.Deflate
+        request.Timeout = 10000
 
-        Using response = request.GetResponse()
-            Using readStream As New StreamReader(response.GetResponseStream(), Encoding.UTF8)
-                Dim json = JObject.Parse(readStream.ReadToEnd()).Value(Of JArray)("categories")
+        Try
+            Dim response = request.GetResponse()
+            Dim readStream As New StreamReader(response.GetResponseStream(), Encoding.UTF8)
+            Dim json = JObject.Parse(readStream.ReadToEnd()).Value(Of JArray)("categories")
 
-                For i As Integer = 0 To json.Count
+            For i As Integer = 0 To json.Count
 
-                    If json.Count > 0 Then
-                        If json.Item(i)("category_name").ToString.Equals(game) Then
-                            Return json.Item(i)
-                        End If
-                    Else
-                        Return 0
+                If json.Count > 0 Then
+                    If json.Item(i)("category_name").ToString.Equals(game) Then
+                        Return json.Item(i)
                     End If
-                Next
-
-            End Using
-        End Using
+                Else
+                    Return 0
+                End If
+            Next
+        Catch ex As Exception
+            MsgBox("Couldn't update game! Check it for correct spelling!")
+            Return False
+        End Try
     End Function
 
     <DllImport("kernel32.dll", SetLastError:=True)> _
