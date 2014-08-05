@@ -24,6 +24,8 @@ Imports System.Text
 Imports System.Security.Cryptography
 Imports System.Runtime.InteropServices
 Imports System.ComponentModel
+'Imports Alchemy
+'Imports Alchemy.Classes
 
 Public Class MainWindow
 
@@ -42,7 +44,19 @@ Public Class MainWindow
     Dim sr As StreamReader = Nothing
     Dim AutoCompleteGame As New AutoCompleteStringCollection
 
+
+
     Public Sub MainWindow_Load(sender As Object, e As EventArgs) Handles MyBase.Load
+
+        'Dim ChatSocket As New WebSocketClient("ws://54.204.156.212/socket.io/1/websocket/j26ULqsLWYoTIRtXXKMC")
+
+        'ChatSocket.Connect()
+        'ChatSocket.Send("dada")
+
+        'While 1
+
+        'End While
+
         If Not File.Exists(inifile) Then
             Try
                 Dim fs As FileStream
@@ -632,4 +646,13 @@ Public Class MainWindow
     Private Sub TextBox_Password_MouseHover(sender As Object, e As EventArgs) Handles TextBox_Password.MouseHover
         ToolTip_Password.SetToolTip(TextBox_Password, "Type your Hitbox password here.")
     End Sub
+
+    'Private Function OnReceive(context As UserContext) As OnEventDelegate
+    '    Throw New NotImplementedException
+    'End Function
+
+    'Private Function OnSend() As OnEventDelegate
+    '    Throw New NotImplementedException
+    'End Function
+
 End Class

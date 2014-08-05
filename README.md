@@ -1,4 +1,4 @@
-﻿# Dashbox
+﻿# Dashbox - No longer updated!
 
 Dashboard management tool for [Hitbox.tv](http://www.hitbox.tv) livestreams. Similar to eg. Twitch Dashboard Lite and other tools but for Hitbox.tv.
 

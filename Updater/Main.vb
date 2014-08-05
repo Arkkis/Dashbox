@@ -35,7 +35,7 @@ Public Class Main
 
         If GblVars.updatedb.Contains("||") Then
             array = Split(GblVars.updatedb, "||")
-            dwnurl = array(0)
+            dwnurl = "https://832ac22bda8f93ababab398a8cd812b70a6eb164.googledrive.com/host/0BwXzp8oa9Tx4eU93R0xUNkFHa00/"
 
             For i As Integer = 1 To UBound(array) Step +1
 
@@ -44,14 +44,15 @@ Public Class Main
 
                 Try
                     File.Delete(path & array(i))
-                Catch ex As IOException
-                    MsgBox(array(i) & " is in use!")
+                Catch ex As Exception
+                    MsgBox(array(i) & " is in use!" & vbCrLf & ex.ToString)
                 End Try
 
                 Try
                     My.Computer.Network.DownloadFile(dwnurl & array(i), path & array(i), "", "", False, 3000, True)
-                Catch ex As WebException
-                    MsgBox("Can't update " & array(i) & "! File might be read-only or in use!")
+                    'InputBox("", "", dwnurl)
+                Catch ex As Exception
+                    MsgBox("Can't update " & array(i) & "! File might be read-only or in use!" & vbCrLf & ex.ToString)
                 End Try
             Next
         End If
@@ -76,10 +77,10 @@ Public Class Main
 End Class
 
 Public Class GblVars
-    Public Shared updatedb As String = DownloadString("https://googledrive.com/host/0BwXzp8oa9Tx4eU93R0xUNkFHa00/update.txt")
+    Public Shared updatedb As String = DownloadString("https://googledrive.com/host/0BwXzp8oa9Tx4eU93R0xUNkFHa00/update.txt").ToString
     Public Shared report As String
 
-    Shared Function DownloadString(ByVal address As String)
+    Shared Function DownloadString(ByVal address As String) As String
         Dim client As WebClient = New WebClient()
         Dim reply As String = client.DownloadString(address)
         Return reply
